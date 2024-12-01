@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gachon Map Shortest Path</title>
     <style>
-        /* 전체 레이아웃 */
+        /* Layout */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f9f9f9;
@@ -30,7 +30,7 @@
             border-radius: 10px;
         }
 
-        /* 지도 이미지 */
+        /* map image */
         #map-container {
             text-align: center;
             margin: 20px 0;
@@ -44,7 +44,7 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
 
-        /* 입력 폼 */
+        /* input form */
         form {
             display: flex;
             flex-wrap: wrap;
@@ -82,10 +82,10 @@
             background-color: #003d82;
         }
 
-        /* 결과 섹션 */
+        /* result section */
         #result {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 22px;
         }
 
         #result h2 {
@@ -95,12 +95,12 @@
         }
 
         #result p {
-            font-size: 16px;
+            font-size: 18px;
             color: #333;
             margin: 5px 0;
         }
 
-        /* 반응형 디자인 */
+        /* reactive design */
         @media (max-width: 600px) {
             form {
                 flex-direction: column;
@@ -125,29 +125,30 @@
     <h1>Gachon University Shortest Path Finder</h1>
 
     <div id="main-container">
-        <!-- 지도 표시 -->
+        <!-- map image -->
         <div id="map-container">
             <img id="map-image" src="/static/gachonMap.jpg" alt="Gachon University Map">
         </div>
 
-        <!-- 입력 폼 -->
+        <!-- path input form -->
         <form id="pathForm">
-            <label for="source">Source:</label>
+            <label for="source">Starting Point:</label>
             <input type="number" id="source" name="source" required>
-            <label for="target">Target:</label>
+            <label for="target">Ending Point:</label>
             <input type="number" id="target" name="target" required>
-            <button type="submit">Find Path</button>
+            <button type="submit">Find Path!</button>
         </form>
 
-        <!-- 결과 영역 -->
+        <!-- result section -->
         <div id="result">
             <h2>Result</h2>
-            <p id="time">Shortest Time: <span style="font-weight: bold;"></span></p>
-            <p id="time_mde">Shortest Time with Mudang: <span style="font-weight: bold;"></span></p>
-            <!-- <p id="path">Path: <span style="font-weight: bold;"></span></p> -->
+            <p id="time">Shortest Walk Time: <span style="font-weight: bold;"></span></p>
+            <p id="time_mde">Shortest Time on a Mudang : <span style="font-weight: bold;"></span></p>
+            <!-- <p id="path">Path: <span style="font-weight: bold;"></span></p> for debugging -->
         </div>
     </div>
 
+    <!-- main calculation  -->
     <script>
         document.getElementById('pathForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -161,16 +162,18 @@
             });
 
             const data = await response.json();
-
+            
+            //getting time data
             if (data.time === null) {
                 document.getElementById('time').textContent = "No path found.";
                 document.getElementById('time_mde').textContent = "No path found.";
-                //document.getElementById('path').textContent = "";
+                //document.getElementById('path').textContent = "" for debugging;
             } else {
-                document.getElementById('time').textContent = `Shortest Time: ${data.time} Seconds`;
-                document.getElementById('time_mde').textContent = `Shortest Time with Mudang: ${data.time_mde} Seconds`;
-                //document.getElementById('path').textContent = `Path: ${data.path}`;
-                // 결과 이미지를 교체
+                document.getElementById('time').innerHTML = `Shortest <span style="color: red;">Walk</span> Time: ${(data.time / 60).toFixed(2)} Minutes`;
+                document.getElementById('time_mde').innerHTML = `Shortest Time on a <span style="color: blue;">Mudang</span>: ${(data.time_mde / 60).toFixed(2)} Minutes`;
+                //document.getElementById('path').textContent = `Path: ${data.path}` for debugging;
+
+                //replace result image
                 const mapImage = document.getElementById('map-image');
                 mapImage.src = `/${data.image_path}`;
             }
