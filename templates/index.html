@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gachon Map Shortest Path</title>
+    <style>
+        /* 전체 레이아웃 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px;
+            margin: 0;
+            text-align: center;
+        }
+
+        #main-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        /* 지도 이미지 */
+        #map-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #map-image {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 입력 폼 */
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        form label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        form input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        form button {
+            background-color: #0056b3;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #003d82;
+        }
+
+        /* 결과 섹션 */
+        #result {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #result h2 {
+            color: #0056b3;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        #result p {
+            font-size: 16px;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 600px) {
+            form {
+                flex-direction: column;
+            }
+
+            form input {
+                width: 100%;
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Gachon University Shortest Path Finder</h1>
+
+    <div id="main-container">
+        <!-- 지도 표시 -->
+        <div id="map-container">
+            <img id="map-image" src="/static/gachonMap.jpg" alt="Gachon University Map">
+        </div>
+
+        <!-- 입력 폼 -->
+        <form id="pathForm">
+            <label for="source">Source:</label>
+            <input type="number" id="source" name="source" min="0" max="4" required>
+            <label for="target">Target:</label>
+            <input type="number" id="target" name="target" min="0" max="4" required>
+            <button type="submit">Find Path</button>
+        </form>
+
+        <!-- 결과 영역 -->
+        <div id="result">
+            <h2>Result</h2>
+            <p id="distance">Distance: <span style="font-weight: bold;"></span></p>
+            <p id="path">Path: <span style="font-weight: bold;"></span></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('pathForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const source = document.getElementById('source').value;
+            const target = document.getElementById('target').value;
+
+            const response = await fetch('/shortest_path', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ source, target })
+            });
+
+            const data = await response.json();
+
+            if (data.distance === null) {
+                document.getElementById('distance').textContent = "No path found.";
+                document.getElementById('path').textContent = "";
+            } else {
+                document.getElementById('distance').textContent = `Shortest Distance: ${data.distance}`;
+                document.getElementById('path').textContent = `Path: ${data.path}`;
+                // 결과 이미지를 교체
+                const mapImage = document.getElementById('map-image');
+                mapImage.src = `/${data.image_path}`;
+            }
+        });
+    </script>
+</body>
+</html>
