@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, jsonify
 import os
 from dijkstra import dijkstra
 import networkx as nx
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import time
 
@@ -34,6 +36,32 @@ adj_matrix = [
     [0.0 , 0.0 , 0.0  , 0.0  , 0.0  , 0.0  , 0.0 , 0.0 , 0.0 , 0.0 , 0.0  , 97.2 , 0.0  , 0.1  , 0.0  , 0.0  , 0.0  , 0.0  , 0.0, 0.0, 0.0, 0.0, 0.0]  # 11-13
 ]
 
+adj_matrix_mde = [
+    [0.0, 61.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [57.7, 0.0, 62.9, 0.0, 0.0, 0.0, 48.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0], 
+    [0.0, 61.9, 0.0, 112.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 103.7, 0.0, 93.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 83.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 104.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.1, 0.0], 
+    [0.0, 20, 0.0, 0.0, 0.0, 0.0, 0.0, 69.7, 55.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 88.2, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 55.5, 0.0, 0.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 36.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 54.3, 60.8, 103.2, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 116.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 73.2, 0.0, 69.6, 0.0, 0.2], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.0, 97.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 50, 0.0, 70, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 159.1, 60, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 175.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 60, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 49.2, 0.0, 78.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 140, 0.0, 60.8, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 97.3, 0.0, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 155.6, 0.0, 0.0, 98.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 97.2, 0.0, 140, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+]
+
 node_positions = {
     0: (420, 70),   # H --
     1: (475, 120),   # W --
@@ -52,7 +80,7 @@ node_positions = {
     14: (690, 600),  # S -
     15: (550, 640),  # T
     16: (230, 510),  # V1
-    17: (220, 610),   # V2
+    17: (260, 620),  # V2
     18: (515, 350),  # α
     19: (310, 320),  # 7-10
     20: (630, 290),  # 9-5
@@ -77,44 +105,77 @@ def shortest_path():
     # Save the visualization with a unique name
     timestamp = int(time.time())  # Use current timestamp for uniqueness
     result_image_path = os.path.join('static', f'shortest_path_{timestamp}.png')
-    visualize_graph_with_background(adj_matrix, dist, path, result_image_path)
+
+    # Run Dijkstra algorithm(2nd)
+    dist_mde, path_mde = dijkstra(adj_matrix_mde, source, target)
+
+    # Visualize both graphs together
+    visualize_graph_with_background(adj_matrix, dist, path, adj_matrix_mde, dist_mde, path_mde, result_image_path)
 
     # Return JSON response
     return jsonify({
         'distance': dist,
         'path': path,
+        'distance_mde': dist_mde,
+        'path_mde': path_mde,
         'image_path': result_image_path
     })
 
-def visualize_graph_with_background(adj_matrix, dist, path, output_path):
-    G = nx.Graph()
+def visualize_graph_with_background(adj_matrix, dist, path, adj_matrix_mde, dist_mde, path_mde, output_path):
+    G1 = nx.Graph()
+    G2 = nx.Graph()
     exclude_nodes = {19, 20, 21, 22} # 제외할 노드
 
+    # Build graph from adj_matrix
     for u in range(len(adj_matrix)):
         for v in range(u + 1, len(adj_matrix)):
             if adj_matrix[u][v] != 0:
-                G.add_edge(u, v, weight=adj_matrix[u][v])
+                G1.add_edge(u, v, weight=adj_matrix[u][v])
+
+    # Build graph from adj_matrix_mde
+    for u in range(len(adj_matrix_mde)):
+        for v in range(u + 1, len(adj_matrix_mde)):
+            if adj_matrix_mde[u][v] != 0:
+                G2.add_edge(u, v, weight=adj_matrix_mde[u][v])
 
     filtered_pos = {node: pos for node, pos in node_positions.items()}
-    visible_nodes = [node for node in G.nodes if node not in exclude_nodes]
-    filtered_labels = {node: str(node) for node in G.nodes if node not in exclude_nodes}
-
+    visible_nodes = [node for node in G1.nodes if node not in exclude_nodes]
+    filtered_labels = {node: str(node) for node in G1.nodes if node not in exclude_nodes}
+    
+    # Create positions and background image
     img = plt.imread('static/gachonMap.jpg')
     img_height, img_width, _ = img.shape
 
     plt.figure(figsize=(12, 8))
     plt.imshow(img, extent=[0, img_width, 0, img_height], aspect='auto')
 
-    nx.draw_networkx_nodes(G, filtered_pos, nodelist=visible_nodes, node_size=400, node_color='skyblue')
-    nx.draw_networkx_labels(G, filtered_pos, labels=filtered_labels, font_size=12, font_weight='bold')
+    # Draw the first graph (adj_matrix) with its path
+    nx.draw_networkx_nodes(G1, filtered_pos, nodelist=visible_nodes, node_size=700, node_color='skyblue')
+    nx.draw_networkx_labels(G1, filtered_pos, labels=filtered_labels, font_size=12, font_weight='bold')
 
-    weights = nx.get_edge_attributes(G, 'weight')
-    nx.draw_networkx_edge_labels(G, filtered_pos, edge_labels=weights, font_size=10)
-    nx.draw_networkx_edges(G, filtered_pos, edge_color='gray', width=2)
+    weights1 = nx.get_edge_attributes(G1, 'weight')
+    weights2 = nx.get_edge_attributes(G2, 'weight')
+
+    nx.draw_networkx_edge_labels(G1, filtered_pos, edge_labels=weights1, font_size=10)
+    nx.draw_networkx_edges(G1, filtered_pos, edge_color='gray', width=2)
+    nx.draw_networkx_edge_labels(G2, filtered_pos, edge_labels=weights2, font_size=10)
+    nx.draw_networkx_edges(G2, filtered_pos, edge_color='gray', width=2)
 
     if path:
         path_edges = [(path[i], path[i + 1]) for i in range(len(path) - 1)]
-        nx.draw_networkx_edges(G, filtered_pos, edgelist=path_edges, edge_color='red', width=3)
+        nx.draw_networkx_edges(G1, filtered_pos, edgelist=path_edges, edge_color='red', width=4)
+
+    if path_mde:
+        path_mde_edges = [(path_mde[i], path_mde[i + 1]) for i in range(len(path_mde) - 1)]
+
+        # Highlight edges in path_mde that are also in specific_edges
+        specific_edges = [(1, 21),(21,5),(5,20),(20,11),(11,22),(22,13),(13,14),(14,15),(15,17),
+                          (17,15),(15,14),(14,13),(13,12),(12,10),(10,19),(19,7),(7,6),(6,1),]  # Example: manually specify edges
+        specific_edges_in_path = [edge for edge in specific_edges if edge in path_mde_edges]
+
+        # Draw specific edges in blue
+        nx.draw_networkx_edges(G2, filtered_pos, edgelist=specific_edges_in_path, edge_color='blue', width=2)
+
 
     plt.axis('off')
     plt.savefig(output_path, bbox_inches='tight')
@@ -122,9 +183,6 @@ def visualize_graph_with_background(adj_matrix, dist, path, output_path):
 
 
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
-
 
