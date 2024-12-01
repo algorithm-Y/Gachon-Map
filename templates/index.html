@@ -144,6 +144,8 @@
             <h2>Result</h2>
             <p id="time">Shortest Walk Time: <span style="font-weight: bold;"></span></p>
             <p id="time_mde">Shortest Time on a Mudang : <span style="font-weight: bold;"></span></p>
+            <br>
+            <p id="time_difference"></p>
             <!-- <p id="path">Path: <span style="font-weight: bold;"></span></p> for debugging -->
         </div>
     </div>
@@ -172,6 +174,10 @@
                 document.getElementById('time').innerHTML = `Shortest <span style="color: red;">Walk</span> Time: ${(data.time / 60).toFixed(2)} Minutes`;
                 document.getElementById('time_mde').innerHTML = `Shortest Time on a <span style="color: blue;">Mudang</span>: ${(data.time_mde / 60).toFixed(2)} Minutes`;
                 //document.getElementById('path').textContent = `Path: ${data.path}` for debugging;
+
+                // Calculate the difference between time and time_mde
+                const timeDifference = data.time - data.time_mde;
+                document.getElementById('time_difference').innerHTML = `If you can get on the Mudang in ${Math.floor(timeDifference / 60)} Minutes, take the BLUE route!`;
 
                 //replace result image
                 const mapImage = document.getElementById('map-image');
