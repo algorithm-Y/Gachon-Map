@@ -5,7 +5,7 @@ import networkx as nx
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import time
+import time as TIME
 
 app = Flask(__name__)
 
@@ -100,28 +100,28 @@ def shortest_path():
     print(f"Received source: {source}, target: {target}")  # 로그 출력
 
     # Run Dijkstra algorithm
-    dist, path = dijkstra(adj_matrix, source, target)
+    time, path = dijkstra(adj_matrix, source, target)
 
     # Save the visualization with a unique name
-    timestamp = int(time.time())  # Use current timestamp for uniqueness
+    timestamp = int(TIME.time())  # Use current timestamp for uniqueness
     result_image_path = os.path.join('static', f'shortest_path_{timestamp}.png')
 
     # Run Dijkstra algorithm(2nd)
-    dist_mde, path_mde = dijkstra(adj_matrix_mde, source, target)
+    time_mde, path_mde = dijkstra(adj_matrix_mde, source, target)
 
     # Visualize both graphs together
-    visualize_graph_with_background(adj_matrix, dist, path, adj_matrix_mde, dist_mde, path_mde, result_image_path)
+    visualize_graph_with_background(adj_matrix, time, path, adj_matrix_mde, time_mde, path_mde, result_image_path)
 
     # Return JSON response
     return jsonify({
-        'distance': dist,
+        'time': time,
         'path': path,
-        'distance_mde': dist_mde,
+        'time_mde': time_mde,
         'path_mde': path_mde,
         'image_path': result_image_path
     })
 
-def visualize_graph_with_background(adj_matrix, dist, path, adj_matrix_mde, dist_mde, path_mde, output_path):
+def visualize_graph_with_background(adj_matrix, time, path, adj_matrix_mde, time_mde, path_mde, output_path):
     G1 = nx.Graph()
     G2 = nx.Graph()
     exclude_nodes = {19, 20, 21, 22} # 제외할 노드
