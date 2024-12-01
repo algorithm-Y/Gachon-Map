@@ -88,32 +88,39 @@ def shortest_path():
 
 def visualize_graph_with_background(adj_matrix, dist, path, output_path):
     G = nx.Graph()
+    exclude_nodes = {19, 20, 21, 22} # 제외할 노드
+
     for u in range(len(adj_matrix)):
         for v in range(u + 1, len(adj_matrix)):
             if adj_matrix[u][v] != 0:
                 G.add_edge(u, v, weight=adj_matrix[u][v])
 
-    for node in range(len(node_positions)):
-        if node not in G.nodes:
-            G.add_node(node)
+    filtered_pos = {node: pos for node, pos in node_positions.items()}
+    visible_nodes = [node for node in G.nodes if node not in exclude_nodes]
+    filtered_labels = {node: str(node) for node in G.nodes if node not in exclude_nodes}
 
     img = plt.imread('static/gachonMap.jpg')
     img_height, img_width, _ = img.shape
-    pos = node_positions
 
     plt.figure(figsize=(12, 8))
     plt.imshow(img, extent=[0, img_width, 0, img_height], aspect='auto')
-    nx.draw_networkx_nodes(G, pos, node_size=400, node_color='skyblue')
-    nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
+
+    nx.draw_networkx_nodes(G, filtered_pos, nodelist=visible_nodes, node_size=400, node_color='skyblue')
+    nx.draw_networkx_labels(G, filtered_pos, labels=filtered_labels, font_size=12, font_weight='bold')
+
     weights = nx.get_edge_attributes(G, 'weight')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=weights, font_size=10)
-    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), edge_color='gray', width=2)
+    nx.draw_networkx_edge_labels(G, filtered_pos, edge_labels=weights, font_size=10)
+    nx.draw_networkx_edges(G, filtered_pos, edge_color='gray', width=2)
+
     if path:
         path_edges = [(path[i], path[i + 1]) for i in range(len(path) - 1)]
-        nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='red', width=3)
+        nx.draw_networkx_edges(G, filtered_pos, edgelist=path_edges, edge_color='red', width=3)
+
     plt.axis('off')
     plt.savefig(output_path, bbox_inches='tight')
     plt.close()
+
+
 
 
 
