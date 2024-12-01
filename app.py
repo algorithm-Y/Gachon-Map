@@ -146,7 +146,7 @@ def visualize_graph_with_background(adj_matrix, time, path, adj_matrix_mde, time
     img = plt.imread('static/gachonMap.jpg')
     img_height, img_width, _ = img.shape
 
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(13, 9.3))
     plt.imshow(img, extent=[0, img_width, 0, img_height], aspect='auto')
 
     # Draw the first graph (adj_matrix) with its path
@@ -185,4 +185,3 @@ def visualize_graph_with_background(adj_matrix, time, path, adj_matrix_mde, time
 
 if __name__ == '__main__':
     app.run(debug=True)
-
